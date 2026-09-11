@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serene — Mental Health Support Agent</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ═══════════════════ EMERGENCY BANNER ═══════════════════ -->
+<div id="emergency-banner" class="emergency-banner hidden">
+  <div class="emergency-inner">
+    <span class="emergency-icon">🆘</span>
+    <span id="emergency-text"></span>
+    <button onclick="dismissBanner()" class="banner-close">✕</button>
+  </div>
+</div>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-area">
+      <div class="logo-icon">🌿</div>
+      <div>
+        <div class="logo-name">Serene</div>
+        <div class="logo-tagline">Mental Health Companion</div>
+      </div>
+    </div>
+    <button class="sidebar-toggle-btn" id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="new-chat-btn" onclick="startNewChat()">
+      <span>✦</span> New Conversation
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Quick Support</div>
+    <button class="quick-btn" onclick="sendQuickMessage('I\'m feeling anxious and overwhelmed right now')">
+      😰 I feel anxious
+    </button>
+    <button class="quick-btn" onclick="sendQuickMessage('I\'ve been feeling very sad and depressed lately')">
+      😔 I feel depressed
+    </button>
+    <button class="quick-btn" onclick="sendQuickMessage('I feel completely alone and nobody understands me')">
+      😶 I feel alone
+    </button>
+    <button class="quick-btn" onclick="sendQuickMessage('I\'m struggling to cope with stress')">
+      😤 I\'m stressed
+    </button>
+    <button class="quick-btn" onclick="sendQuickMessage('I need help, I\'m in crisis')">
+      🆘 I need urgent help
+    </button>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Wellness Tools</div>
+    <button class="quick-btn tool-btn" onclick="openBreathingExercise()">
+      🌬️ Breathing Exercise
+    </button>
+    <button class="quick-btn tool-btn" onclick="showHotlines()">
+      📞 Crisis Hotlines
+    </button>
+    <button class="quick-btn tool-btn" onclick="showGroundingTechnique()">
+      🌿 Grounding Technique
+    </button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="disclaimer">
+      <strong>Important:</strong> Serene is an AI companion and is not a substitute for professional mental health care. If you are in immediate danger, please call <strong>988</strong> or <strong>911</strong>.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+<div class="main-content" id="main-content">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="agent-info">
+        <div class="agent-avatar">🌿</div>
+        <div>
+          <div class="agent-name">Serene</div>
+          <div class="agent-status">
+            <span class="status-dot"></span>
+            <span>Here for you · Always available</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="crisis-indicator" id="crisis-indicator">
+        <span id="crisis-label">Feeling okay</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat container -->
+  <div class="chat-container" id="chat-container">
+
+    <!-- Welcome message -->
+    <div class="welcome-screen" id="welcome-screen">
+      <div class="welcome-content">
+        <div class="welcome-icon">🌿</div>
+        <h1 class="welcome-title">Welcome to Serene</h1>
+        <p class="welcome-subtitle">A safe, compassionate space to talk about how you're feeling.</p>
+        <p class="welcome-body">
+          I'm here to listen — without judgment, without rush. Whether you're feeling anxious, sad, overwhelmed, or you just need someone to talk to, I'm here.
+        </p>
+        <div class="welcome-cards">
+          <div class="welcome-card" onclick="sendQuickMessage('Hi Serene, I\'d like to talk about how I\'m feeling today')">
+            <div class="card-icon">💬</div>
+            <div class="card-text">Start talking</div>
+          </div>
+          <div class="welcome-card" onclick="openBreathingExercise()">
+            <div class="card-icon">🌬️</div>
+            <div class="card-text">Calm exercise</div>
+          </div>
+          <div class="welcome-card" onclick="showHotlines()">
+            <div class="card-icon">📞</div>
+            <div class="card-text">Crisis lines</div>
+          </div>
+        </div>
+        <p class="welcome-note">
+          🔒 This conversation is private. You don't need to share your name.
+        </p>
+      </div>
+    </div>
+
+    <!-- Messages area -->
+    <div class="messages-area" id="messages-area"></div>
+
+  </div>
+
+  <!-- Typing indicator -->
+  <div class="typing-indicator hidden" id="typing-indicator">
+    <div class="typing-avatar">🌿</div>
+    <div class="typing-bubble">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="typing-text">Serene is thinking...</div>
+  </div>
+
+  <!-- Input area -->
+  <div class="input-area">
+    <div class="input-wrapper">
+      <textarea
+        id="message-input"
+        class="message-input"
+        placeholder="Share what's on your mind… I'm here to listen."
+        rows="1"
+        maxlength="2000"
+      ></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="input-footer">
+      <span class="char-count" id="char-count">0 / 2000</span>
+      <span class="input-hint">Press Enter to send · Shift+Enter for new line</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ MODALS ═══════════════════ -->
+
+<!-- Breathing Exercise Modal -->
+<div class="modal-overlay hidden" id="breathing-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🌬️ Breathing Exercise</h2>
+      <button onclick="closeModal('breathing-modal')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-intro">Box breathing activates your calm nervous system. Find a comfortable position and follow along.</p>
+      <div class="breathing-circle-container">
+        <div class="breathing-circle" id="breathing-circle">
+          <div class="breath-text" id="breath-phase">Ready</div>
+          <div class="breath-count" id="breath-count">4</div>
+        </div>
+      </div>
+      <div class="breathing-steps">
+        <div class="step active" id="step-inhale">① Inhale (4s)</div>
+        <div class="step" id="step-hold1">② Hold (4s)</div>
+        <div class="step" id="step-exhale">③ Exhale (4s)</div>
+        <div class="step" id="step-hold2">④ Hold (4s)</div>
+      </div>
+      <div class="cycle-display">Cycle <span id="cycle-num">0</span> of 4</div>
+      <div class="breathing-btns">
+        <button class="modal-btn primary" id="breath-start-btn" onclick="startBreathing()">Start</button>
+        <button class="modal-btn secondary" onclick="stopBreathing()">Stop</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hotlines Modal -->
+<div class="modal-overlay hidden" id="hotlines-modal">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <h2>📞 Crisis & Support Hotlines</h2>
+      <button onclick="closeModal('hotlines-modal')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="hotlines-content">
+      <div class="loading-spinner">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Grounding Modal -->
+<div class="modal-overlay hidden" id="grounding-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🌿 5-4-3-2-1 Grounding</h2>
+      <button onclick="closeModal('grounding-modal')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-intro">This technique brings you back to the present moment. Go slowly through each step.</p>
+      <div class="grounding-steps">
+        <div class="grounding-step">
+          <div class="g-num">5</div>
+          <div class="g-content">
+            <strong>THINGS YOU CAN SEE</strong>
+            <p>Look around. Name 5 things you can see right now — a chair, a window, your hands…</p>
+          </div>
+        </div>
+        <div class="grounding-step">
+          <div class="g-num">4</div>
+          <div class="g-content">
+            <strong>THINGS YOU CAN TOUCH</strong>
+            <p>Notice 4 physical sensations — the chair beneath you, the floor under your feet…</p>
+          </div>
+        </div>
+        <div class="grounding-step">
+          <div class="g-num">3</div>
+          <div class="g-content">
+            <strong>THINGS YOU CAN HEAR</strong>
+            <p>Listen carefully. Name 3 sounds — distant traffic, your own breathing, a fan…</p>
+          </div>
+        </div>
+        <div class="grounding-step">
+          <div class="g-num">2</div>
+          <div class="g-content">
+            <strong>THINGS YOU CAN SMELL</strong>
+            <p>Take a breath. Notice 2 scents — the air, your clothes, something nearby…</p>
+          </div>
+        </div>
+        <div class="grounding-step">
+          <div class="g-num">1</div>
+          <div class="g-content">
+            <strong>THING YOU CAN TASTE</strong>
+            <p>Notice 1 taste in your mouth right now.</p>
+          </div>
+        </div>
+      </div>
+      <p class="grounding-note">Take your time. There's no rush. Breathe between each step.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Resource cards panel -->
+<div class="resources-panel hidden" id="resources-panel">
+  <div class="resources-header">
+    <span>Support Resources</span>
+    <button onclick="closeResourcePanel()" class="panel-close">✕</button>
+  </div>
+  <div id="resources-content"></div>
+</div>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>
